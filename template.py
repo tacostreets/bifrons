@@ -4,10 +4,10 @@ import sys
 
 
 def main():  # colon marks the beginning of a block of code
-    print("You rock!")
+    name = sys.argv[1]  # argv is argument value list
+    print(f"You rock, {name}!")  # f makes this an f-string a formatted string
 
-    for item in sys.argv:  # talk about for loop 
-        print(item)
+    
         
 if __name__ == '__main__':
     main()
