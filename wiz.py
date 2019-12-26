@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 
 def main():
+    print("Enter your command")
     while True:
-        task = input("> ")
-        if task == "quit":
+        try: 
+            task = input("> ")
+            if task == "quit":
+                print("I am now quitting")
+                break
+            print(f"you asked me to:{task}")
+        except:
+            print("\nEnd of line user")
             break
-        print(f"you asked me to:{task}")
             
 def power(num, P):
     """raises NUM to the exponent P."""
@@ -13,3 +19,4 @@ def power(num, P):
 
 if __name__=="__main__":
     main()
+    
