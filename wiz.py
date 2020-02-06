@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-# calling out the variables as globals
+import readline
 
+# calling out the variables as globals
 WIZ_LOCATION = "tower"
 WIZ_SKILL = 0
 WIZ_LIBRARY = 3
 WIZ_GOLD = 0
 
 def main():
+    readline.set_auto_history(True)
     print("Enter your command")
     while True:
         try: 
@@ -121,6 +123,7 @@ def coins(num):
 def power(num, P):
     """raises NUM to the exponent P."""
     return num**P 
+
 
 if __name__=="__main__":
     main()
