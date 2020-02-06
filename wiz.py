@@ -75,26 +75,22 @@ def request(task):
             WIZ_GOLD = WIZ_GOLD - WIZ_LIBRARY
             WIZ_LIBRARY = WIZ_LIBRARY + 1
             print(f"What a good consumer! Library level is {WIZ_LIBRARY}.")
-            print(f"You have {WIZ_GOLD} gold left.")
+            print(f"You have {coins(WIZ_GOLD)} left.")
         elif WIZ_LOCATION != "village":
             print("You can only shop in the village.")
         elif WIZ_GOLD == 0:
             print ("Your wallet is empty. You broke.")
         elif WIZ_GOLD < WIZ_LIBRARY:
-            print(f"You have {WIZ_GOLD} gold. To improve your library will cost {WIZ_LIBRARY} gold.")
+            print(f"You have {coins(WIZ_GOLD)}. To improve your library, it will cost {coins(WIZ_LIBRARY)}.")
     elif task == "work":
         if WIZ_LOCATION == "village" and WIZ_SKILL > 0:
             WIZ_GOLD = WIZ_GOLD + WIZ_SKILL       #you must have skill to earn gold
             print("You provide magical services to the village. They even pay you!")
-            print(f"You now have {WIZ_GOLD} gold.")
-
-    elif task == "work":
-        if WIZ_LOCATION == "village":
-            WIZ_GOLD = WIZ_GOLD + WIZ_SKILL       #you must have skill to earn gold
-            print("You provide magical services to the village. They even pay you!")
-            print(f"You now have {WIZ_GOLD} gold.")
-        else:
-            print("You can only work in the village.")
+            print(f"You now have {coins(WIZ_GOLD)}.")
+        elif WIZ_LOCATION != "village":
+            print("You can only work in the village")
+        elif WIZ_SKILL <= 0:
+            print("You don't have enough skill to work. Read a book!")
 
     elif task == "forest":
         print("You head out into the forest behind your tower.")
@@ -115,6 +111,12 @@ def request(task):
         raise EOFError
     else:
         print(f"I don't understand:{task}")
+
+def coins(num):
+    if num == 1:
+        return f"{num} gold coin"
+    else:
+        return f"{num} gold coins"
 
 def power(num, P):
     """raises NUM to the exponent P."""
