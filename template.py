@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 
-
 def main():  # colon marks the beginning of a block of code
     while True:
         task = input("wat? ")
