@@ -9,6 +9,7 @@ WIZ_GOLD = 0
 
 def main():
     readline.set_auto_history(True)
+    readline.set_completer(completion)
     print("Enter your command")
     while True:
         try: 
@@ -123,7 +124,26 @@ def coins(num):
 def power(num, P):
     """raises NUM to the exponent P."""
     return num**P 
-
+def completion(text, state):
+    options = [
+        "tower",
+        "village",
+        "study",
+        "work",
+        "shop",
+        "help",
+        "quit",
+        "forest",
+    ]
+    match = []
+    for option in options:
+        if option.startswith(text):
+            match.append(option)
+    if state >= len(match):
+        return None 
+    else:
+        return match[state]
+        
 
 if __name__=="__main__":
     main()
