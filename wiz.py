@@ -7,7 +7,7 @@ def main():
     wiz = Wizard()
     print("Enter your command")
     while True:
-        try: 
+        try:
             task = input("> ")
             request(wiz, task)
 
@@ -19,9 +19,61 @@ def main():
 class Wizard:
     def __init__(self, location="tower", skill=0, gold=0, library=2):
         self.location = location
+        self.valid_locations = ["tower", "village", "forest"]
         self.skill = skill
         self.gold = gold
         self.library = library
+
+    def travel(self, location):
+        if self.location == location:
+            print(f"You are already in the {location}, silly wizard!")
+        elif location == "tower":
+            print("You travel to your modest one story wizard tower!")
+            self.location = "tower"
+        elif location == "village":
+            print("You travel to the village 100 yds upwind from your tower.")
+            self.location = "village"
+        elif location == "forest":
+            print("You head out into the forest behind your tower.")
+            self.location = "forest"
+        else:
+            print(f"I don't know where {location} is.")
+
+    def study(self):
+        if self.location == "tower" and self.library > self.skill:
+            self.skill = self.skill + 1
+            print(f"What a good student! Current skill level is {self.skill}.")
+        elif self.location != "tower":
+            print("You can only study in the tower.")
+        elif self.library <= self.skill:
+            print(f"Your library is {self.library} and your skill level is {self.skill}")
+            print("If you want to improve your skill you need a better library.")
+
+    def shop(self):
+        if self.location == "village" and self.gold >= self.library:
+            self.gold = self.gold - self.library
+            self.library = self.library + 1
+            print(f"What a good consumer! Library level is {self.library}.")
+            print(f"You have {coins(self.gold)} left.")
+        elif self.location != "village":
+            print("You can only shop in the village.")
+        elif self.gold == 0:
+            print ("Your wallet is empty. You broke.")
+        elif self.gold < self.library:
+            print(f"You have {coins(self.gold)}. To improve your library, it will cost {coins(self.library)}.")
+
+    def work(self):
+        if self.location == "village" and self.skill > 0:
+            self.gold = self.gold + self.skill       #you must have skill to earn gold
+            print("You provide magical services to the village. They even pay you!")
+            print(f"You now have {coins(self.gold)}.")
+        elif self.location != "village":
+            print("You can only work in the village")
+        elif self.skill <= 0:
+            print("You don't have enough skill to work. Read a book!")
+
+
+
     def status(self):
         print(f"You are at the {self.location}.")
         print(f"Your library is level {self.library}.")
@@ -30,21 +82,11 @@ class Wizard:
 
 
 def request(wiz, task):
-    if wiz.location == task:
-        print(f"You are already in the {task}, silly wizard!")
-
-    elif task == "tower":
-        print("You travel to your modest one story wizard tower!")
-        wiz.location = "tower"
+    if task in wiz.valid_locations:
+        wiz.travel(task)
     elif task == "study":
-        if wiz.location == "tower" and wiz.library > wiz.skill:
-            wiz.skill = wiz.skill + 1
-            print(f"What a good student! Current skill level is {wiz.skill}.")
-        elif wiz.location != "tower":
-            print("You can only study in the tower.")
-        elif wiz.library <= wiz.skill:
-            print(f"Your library is {wiz.library} and your skill level is {wiz.skill}")
-            print("If you want to improve your skill you need a better library.")
+        wiz.study()
+
 
             #     -> task is tower
             #         travel to tower
@@ -75,35 +117,10 @@ def request(wiz, task):
             #         e-> skill is not sufficient
             #              complain about skill
 
-    elif task == "village":
-        print("You travel to the village 100 yds upwind from your tower.")
-        wiz.location = "village"
     elif task == "shop":
-        if wiz.location == "village" and wiz.gold >= wiz.library:
-            wiz.gold = wiz.gold - wiz.library
-            wiz.library = wiz.library + 1
-            print(f"What a good consumer! Library level is {wiz.library}.")
-            print(f"You have {coins(wiz.gold)} left.")
-        elif wiz.location != "village":
-            print("You can only shop in the village.")
-        elif wiz.gold == 0:
-            print ("Your wallet is empty. You broke.")
-        elif wiz.gold < wiz.library:
-            print(f"You have {coins(wiz.gold)}. To improve your library, it will cost {coins(wiz.library)}.")
+        wiz.shop()
     elif task == "work":
-        if wiz.location == "village" and wiz.skill > 0:
-            wiz.gold = wiz.gold + wiz.skill       #you must have skill to earn gold
-            print("You provide magical services to the village. They even pay you!")
-            print(f"You now have {coins(wiz.gold)}.")
-        elif wiz.location != "village":
-            print("You can only work in the village")
-        elif wiz.skill <= 0:
-            print("You don't have enough skill to work. Read a book!")
-
-    elif task == "forest":
-        print("You head out into the forest behind your tower.")
-        wiz.location = "forest"
-
+        wiz.work()
     elif task == "status":
         wiz.status()
 
@@ -135,7 +152,7 @@ def coins(num):
 
 def power(num, P):
     """raises NUM to the exponent P."""
-    return num**P 
+    return num**P
 
 
 def completion(text, state):
@@ -155,11 +172,10 @@ def completion(text, state):
         if option.startswith(text):
             match.append(option)
     if state >= len(match):
-        return None 
+        return None
     else:
         return match[state]
-        
+
 
 if __name__=="__main__":
     main()
-    
