@@ -17,12 +17,14 @@ def main():
 
 
 class Wizard:
-    def __init__(self, location="tower", skill=0, gold=0, library=2):
+    def __init__(self, location="tower", skill=0, gold=0, library=2,ingredients=0, potions=0):
         self.location = location
         self.valid_locations = ["tower", "village", "forest"]
         self.skill = skill
         self.gold = gold
         self.library = library
+        self.ingredients = ingredients
+        self.potions = potions
 
     def travel(self, location):
         if self.location == location:
@@ -72,6 +74,39 @@ class Wizard:
         elif self.skill <= 0:
             print("You don't have enough skill to work. Read a book!")
 
+    def gather(self):
+        if self.location == "forest":
+            self.ingredients = self.ingredients + 1
+            print("You gather herbs for your potions.")
+            print(f"You now have {ingredients(self.ingredients)}.")
+        else:
+            print("You can only gather in the forest.")
+
+    def brew(self):
+        if self.location == "tower" and self.ingredients > 0 and self.skill > 0:
+            self.potions = self.potions + 1
+            self.ingredients = self.ingredients - 1
+            print(f"What a crafty wizard! You now have {potions(self.potions)}.")
+            print(f"You have {ingredients(self.ingredients)} left")
+        elif self.location != "tower":
+            print("You can only brew in the tower")
+        elif self.skill == 0:
+            print("You need some skill to brew, go study.")
+        elif self.ingredients == 0:
+            print("You can't make a potion without ingredients!")
+
+    def sell(self):
+        if self.location == "village" and self.potions > 0:
+            self.potions = self.potions - 1
+            self.gold = self.gold + self.skill * 2
+            print(f"You have sold 1 potion.")
+            print(f"You have {potions(self.potions)} potion left.")
+            print(f"You now have {coins(self.gold)}.")
+        elif self.location != "village":
+            print("You can only sell your potions in the village.")
+        elif self.potions == 0:
+            print("You have no potions to sell!")
+
 
 
     def status(self):
@@ -79,6 +114,8 @@ class Wizard:
         print(f"Your library is level {self.library}.")
         print(f"Your skill level is {self.skill}.")
         print(f"Your purse has {coins(self.gold)}.")
+        print(f"You have {ingredients(self.ingredients)}.")
+        print(f"You have {potions(self.potions)}.")
 
 
 def request(wiz, task):
@@ -86,43 +123,18 @@ def request(wiz, task):
         wiz.travel(task)
     elif task == "study":
         wiz.study()
-
-
-            #     -> task is tower
-            #         travel to tower
-            #     e-> task is study
-            #         -> location is tower AND library is sufficient
-            #             increase skill
-            #         e-> location is not tower
-            #             complain about location
-            #         e-> library is insufficient
-            #             complain about library
-
-            #     e-> task is village
-            #         travel to village
-            #     e-> task is shop
-            #         -> location is village AND gold is sufficient
-            #                 increase library AND decrease gold
-            #         e-> location is not village
-            #             complain about location
-            #         e-> gold is zero
-            #             you are broke
-            #         e-> gold is insufficient
-            #             conplain about gold
-            #     e-> task is work
-            #         -> location is village and skill is sufficient
-            #             increase gold
-            #         e-> location is not village
-            #             complain about location
-            #         e-> skill is not sufficient
-            #              complain about skill
-
     elif task == "shop":
         wiz.shop()
     elif task == "work":
         wiz.work()
     elif task == "status":
         wiz.status()
+    elif task == "gather":
+        wiz.gather()
+    elif task == "brew":
+        wiz.brew()
+    elif task == "sell":
+        wiz.sell()
 
     elif task == "help":
         print("You can do any of the following:")
@@ -130,10 +142,13 @@ def request(wiz, task):
         print("  status")
         print("  tower")
         print("    study")
+        print("    brew")
         print("  village")
         print("    shop")
         print("    work")
+        print("    sell")
         print("  forest")
+        print("    gather")
         print("  quit")
 
     elif task == "quit":
@@ -142,13 +157,20 @@ def request(wiz, task):
     else:
         print(f"I don't understand:{task}")
 
+def pluralize(noun, num):
+    if num == 1:
+        return(f"{num} {noun}")
+        else:
+            return(f"{num} {noun}s")
 
 def coins(num):
-    if num == 1:
-        return f"{num} gold coin"
-    else:
-        return f"{num} gold coins"
+    return pluralize("coin", num)
 
+def ingredients(num):
+    return pluralize("ingredient", num)
+
+def potions(num):
+    return pluralize("potion", num)
 
 def power(num, P):
     """raises NUM to the exponent P."""
@@ -158,14 +180,17 @@ def power(num, P):
 def completion(text, state):
     options = [
         "tower",
-        "village",
+        "brew",
         "study",
+        "village",
         "work",
         "shop",
         "help",
         "status",
         "quit",
         "forest",
+        "gather",
+
     ]
     match = []
     for option in options:
