@@ -160,8 +160,8 @@ def request(wiz, task):
 def pluralize(noun, num):
     if num == 1:
         return(f"{num} {noun}")
-        else:
-            return(f"{num} {noun}s")
+    else:
+        return(f"{num} {noun}s")
 
 def coins(num):
     return pluralize("coin", num)
