@@ -1,21 +1,46 @@
 #!/usr/bin/env python3
-import readline
+import os.path
 
 def main():
-    readline.set_auto_history(True)
-    readline.set_completer(completion)
-    wiz = Wizard()
+    set_readline()
+    wiz = load("wiz.save")
     print("Enter your command")
     while True:
         try:
             task = input("> ")
             request(wiz, task)
+            save(wiz)
 
         except (EOFError, KeyboardInterrupt):
             print("\nEnd of line user")
             break
 
+def save(wiz):
+    data = {
+        "location": wiz.location,
+        "skill": wiz.skill,
+        "gold": wiz.gold,
+        "library": wiz.library,
+        "ingredients": wiz.ingredients,
+        "potions": wiz.potions,
+    }
+    savefile = open("wiz.save", "w")
+    for key in data:
+        savefile.write(f"{key}:{data[key]}\n")
 
+def load(filename):
+    data = {}
+    if os.path.isfile(filename):
+        fileobj = open(filename, "r")
+        for line in fileobj.readlines():
+            line = line.strip()
+            key, value = line.split(":")
+            if key in ("skill", "gold", "library", "potions", "ingredients"):
+                value = int(value)
+            data[key] = value
+    wiz = Wizard(**data)
+    return wiz
+        
 class Wizard:
     def __init__(self, location="tower", skill=0, gold=0, library=2,ingredients=0, potions=0):
         self.location = location
@@ -176,6 +201,15 @@ def power(num, P):
     """raises NUM to the exponent P."""
     return num**P
 
+def set_readline():
+    import readline
+    readline.set_auto_history(True)
+    readline.set_completer(completion)
+
+    if "libedit" in readline.__doc__:
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        readline.parse_and_bind("tab: complete")
 
 def completion(text, state):
     options = [
