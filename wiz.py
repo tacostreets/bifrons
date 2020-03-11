@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os.path
+from configparser import ConfigParser
 
 def main():
     set_readline()
@@ -16,7 +17,8 @@ def main():
             break
 
 def save(wiz):
-    data = {
+    data = ConfigParser()
+    data["wizard"] = {
         "location": wiz.location,
         "skill": wiz.skill,
         "gold": wiz.gold,
@@ -25,31 +27,26 @@ def save(wiz):
         "potions": wiz.potions,
     }
     savefile = open("wiz.save", "w")
-    for key in data:
-        savefile.write(f"{key}:{data[key]}\n")
+    data.write(savefile)
 
 def load(filename):
-    data = {}
+    data = ConfigParser()
     if os.path.isfile(filename):
-        fileobj = open(filename, "r")
-        for line in fileobj.readlines():
-            line = line.strip()
-            key, value = line.split(":")
-            if key in ("skill", "gold", "library", "potions", "ingredients"):
-                value = int(value)
-            data[key] = value
-    wiz = Wizard(**data)
+        data.read(filename)
+    else:
+        data["wizard"] = {}
+    wiz = Wizard(**data["wizard"])
     return wiz
         
 class Wizard:
     def __init__(self, location="tower", skill=0, gold=0, library=2,ingredients=0, potions=0):
         self.location = location
         self.valid_locations = ["tower", "village", "forest"]
-        self.skill = skill
-        self.gold = gold
-        self.library = library
-        self.ingredients = ingredients
-        self.potions = potions
+        self.skill = int(skill)
+        self.gold = int(gold)
+        self.library = int(library)
+        self.ingredients = int(ingredients)
+        self.potions = int(potions)
 
     def travel(self, location):
         if self.location == location:
