@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wizard's Adventures</title>
+    <script>
+        function main() {
+            form = document.getElementById("wizard-form");
+            form.addEventListener("submit", task);
+            updateLocationText();
+        }
+
+        function task(evt) {
+            evt.preventDefault();
+            text = document.getElementById("task").value;
+            setLocation(text);
+            updateLocationText();
+        }
+
+        function updateLocationText() {
+            wizLocation = getLocation();//created wizLocation variable
+            p = document.getElementById("location");
+            if (wizLocation == "tower"){
+                p.innerHTML = "You travel to your modest one-story wizard tower.";
+            } else if (wizLocation == "village") {
+                p.innerHTML = "You travel to the village 100 yds upwind from your tower.";
+            } else if (wizLocation == "forest") {
+                p.innerHTML = "You head out into the forest behind your tower.";
+            } else {
+                p.innerHTML = "I don't know where " + wizLocation + " is.";
+            }
+
+        }
+// local storage set here and can be changed inside this function later
+        function setLocation(wizLocation) {
+            localStorage.setItem("wizLocation", wizLocation);
+        }
+
+        function getLocation() {
+            wizLocation = localStorage.getItem("wizLocation");
+            if (wizLocation === null) {
+                setLocation("tower");
+            }
+            return localStorage.getItem("wizLocation");  
+        }
+
+        function setSkill(wizSkill) {
+            localStorage.setItem("wizSkill", wizSkill);
+        }
+
+        function getSkill() {
+            wizSkill = localStorage.getItem("wizSkill");
+            if (wizSkill === null) {
+                setSkill(0);
+            }
+            return localStorage.getItem("wizSkill");
+        }
+
+
+
+    </script>
+
+</head>
+
+<body onload="main()">
+    <form id="wizard-form" action="index.html" method="GET">
+        <label for="task">What would you like to do?</label>
+        <input id="task" type="text" name="task" />
+        <input type="submit" value="Do My Bidding" />   
+    </form>
+    <hr/>
+    <p id="location">
+        
+    </p>
+
+</body>
+
+</html>
