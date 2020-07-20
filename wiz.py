@@ -1,18 +1,23 @@
-#!/usr/bin/env python3
-import os.path
-from configparser import ConfigParser
+#!/usr/bin/env python3 
+# shebang Python sees a comment and ignores it 
+# Bash (bourne again shell) sees a command to run python3 - telling bash to use python3 
+import os.path #importing a top level module(library) 'os' and a sub module 'path' - so it's available to use
+from configparser import ConfigParser # from the module 'configparser' import only 'ConfigParser'- a class for a specific kind of config file
 
-def main():
-    set_readline()
+
+def main(): #define a thing 'main()' aka js function
+    set_readline() # calling the readline function below
     wiz = load("wiz.save")
     print("Enter your command")
     while True:
+        exit_codes = [EOFError, KeyboardInterrupt]
         try:
-            task = input("> ")
-            request(wiz, task)
+            task = input("> ") # built-in function and excepts keyboard input back as a string and assigns to task
+            result = request(wiz, task) # request defined below as a function
+            print(result)
             save(wiz)
 
-        except (EOFError, KeyboardInterrupt):
+        except exit_codes: #exception clause catches an error and executes the next two lines
             print("\nEnd of line user")
             break
 
@@ -29,13 +34,13 @@ def save(wiz):
     savefile = open("wiz.save", "w")
     data.write(savefile)
 
-def load(filename):
-    data = ConfigParser()
-    if os.path.isfile(filename):
-        data.read(filename)
+def load(filename): # load the variable 'filename' passed thru load() above on line 10
+    data = ConfigParser() # CP acts like a dictionary with dictionaries inside of it aka nested dictionaries
+    if os.path.isfile(filename): # in os.path is 'filename' a file -isfile is boolean
+        data.read(filename) # if yes then read the file
     else:
-        data["wizard"] = {}
-    wiz = Wizard(**data["wizard"])
+        data["wizard"] = {} # sets a key to an empty set of dictionaries
+    wiz = Wizard(**data["wizard"]) # using the ** method to turn the dictionary into a set of params
     return wiz
         
 class Wizard:
@@ -50,134 +55,143 @@ class Wizard:
 
     def travel(self, location):
         if self.location == location:
-            print(f"You are already in the {location}, silly wizard!")
+            msg = (f"You are already in the {location}, silly wizard!")
         elif location == "tower":
-            print("You travel to your modest one story wizard tower!")
+            msg = ("You travel to your modest one story wizard tower!")
             self.location = "tower"
         elif location == "village":
-            print("You travel to the village 100 yds upwind from your tower.")
+            msg = ("You travel to the village 100 yds upwind from your tower.")
             self.location = "village"
         elif location == "forest":
-            print("You head out into the forest behind your tower.")
+            msg = ("You head out into the forest behind your tower.")
             self.location = "forest"
         else:
-            print(f"I don't know where {location} is.")
+            msg = (f"I don't know where {location} is.")
+        return msg
 
     def study(self):
         if self.location == "tower" and self.library > self.skill:
             self.skill = self.skill + 1
-            print(f"What a good student! Current skill level is {self.skill}.")
+            msg = f"What a good student! Current skill level is {self.skill}."
         elif self.location != "tower":
-            print("You can only study in the tower.")
+            msg = "You can only study in the tower."
         elif self.library <= self.skill:
-            print(f"Your library is {self.library} and your skill level is {self.skill}")
-            print("If you want to improve your skill you need a better library.")
+            msg = f"Your library is {self.library} and your skill level is {self.skill}\n"
+            msg = msg + "If you want to improve your skill you need a better library."
+        return msg
 
     def shop(self):
         if self.location == "village" and self.gold >= self.library:
             self.gold = self.gold - self.library
             self.library = self.library + 1
-            print(f"What a good consumer! Library level is {self.library}.")
-            print(f"You have {coins(self.gold)} left.")
+            msg = f"What a good consumer! Library level is {self.library}.\n"
+            msg += f"You have {coins(self.gold)} left."
         elif self.location != "village":
-            print("You can only shop in the village.")
+            msg = "You can only shop in the village."
         elif self.gold == 0:
-            print ("Your wallet is empty. You broke.")
+            msg =  "Your wallet is empty. You broke."
         elif self.gold < self.library:
-            print(f"You have {coins(self.gold)}. To improve your library, it will cost {coins(self.library)}.")
+            msg = f"You have {coins(self.gold)}. To improve your library, it will cost {coins(self.library)}."
+        return msg
 
     def work(self):
         if self.location == "village" and self.skill > 0:
             self.gold = self.gold + self.skill       #you must have skill to earn gold
-            print("You provide magical services to the village. They even pay you!")
-            print(f"You now have {coins(self.gold)}.")
+            msg = "You provide magical services to the village. They even pay you!\n"
+            msg += f"You now have {coins(self.gold)}."
         elif self.location != "village":
-            print("You can only work in the village")
+            msg = "You can only work in the village"
         elif self.skill <= 0:
-            print("You don't have enough skill to work. Read a book!")
+            msg = "You don't have enough skill to work. Read a book!"
+        return msg
 
     def gather(self):
         if self.location == "forest":
             self.ingredients = self.ingredients + 1
-            print("You gather herbs for your potions.")
-            print(f"You now have {ingredients(self.ingredients)}.")
+            msg = "You gather herbs for your potions.\n"
+            msg += f"You now have {ingredients(self.ingredients)}."
         else:
-            print("You can only gather in the forest.")
+            msg = "You can only gather in the forest."
+        return msg
 
     def brew(self):
         if self.location == "tower" and self.ingredients > 0 and self.skill > 0:
             self.potions = self.potions + 1
             self.ingredients = self.ingredients - 1
-            print(f"What a crafty wizard! You now have {potions(self.potions)}.")
-            print(f"You have {ingredients(self.ingredients)} left")
+            msg = f"What a crafty wizard! You now have {potions(self.potions)}.\n"
+            msg += f"You have {ingredients(self.ingredients)} left"
         elif self.location != "tower":
-            print("You can only brew in the tower")
+            msg = "You can only brew in the tower"
         elif self.skill == 0:
-            print("You need some skill to brew, go study.")
+            msg = "You need some skill to brew, go study."
         elif self.ingredients == 0:
-            print("You can't make a potion without ingredients!")
+            msg = "You can't make a potion without ingredients!"
+        return msg
 
     def sell(self):
         if self.location == "village" and self.potions > 0:
             self.potions = self.potions - 1
             self.gold = self.gold + self.skill * 2
-            print(f"You have sold 1 potion.")
-            print(f"You have {potions(self.potions)} potion left.")
-            print(f"You now have {coins(self.gold)}.")
+            msg = f"You have sold 1 potion.\n"
+            msg += f"You have {potions(self.potions)} potion left.\n"
+            msg += f"You now have {coins(self.gold)}."
         elif self.location != "village":
-            print("You can only sell your potions in the village.")
+            msg = "You can only sell your potions in the village."
         elif self.potions == 0:
-            print("You have no potions to sell!")
+            msg = "You have no potions to sell!"
+        return msg
 
 
 
     def status(self):
-        print(f"You are at the {self.location}.")
-        print(f"Your library is level {self.library}.")
-        print(f"Your skill level is {self.skill}.")
-        print(f"Your purse has {coins(self.gold)}.")
-        print(f"You have {ingredients(self.ingredients)}.")
-        print(f"You have {potions(self.potions)}.")
+        msg = f"You are at the {self.location}.\n"
+        msg += f"Your library is level {self.library}.\n"
+        msg += f"Your skill level is {self.skill}.\n"
+        msg += f"Your purse has {coins(self.gold)}.\n"
+        msg += f"You have {ingredients(self.ingredients)}.\n"
+        msg += f"You have {potions(self.potions)}."
+        return msg
 
 
 def request(wiz, task):
     if task in wiz.valid_locations:
-        wiz.travel(task)
+        return wiz.travel(task)
     elif task == "study":
-        wiz.study()
+        return wiz.study()
     elif task == "shop":
-        wiz.shop()
+        return wiz.shop()
     elif task == "work":
-        wiz.work()
+        return wiz.work()
     elif task == "status":
-        wiz.status()
+        return wiz.status()
     elif task == "gather":
-        wiz.gather()
+        return wiz.gather()
     elif task == "brew":
-        wiz.brew()
+        return wiz.brew()
     elif task == "sell":
-        wiz.sell()
+        return wiz.sell()
 
     elif task == "help":
-        print("You can do any of the following:")
-        print("  help")
-        print("  status")
-        print("  tower")
-        print("    study")
-        print("    brew")
-        print("  village")
-        print("    shop")
-        print("    work")
-        print("    sell")
-        print("  forest")
-        print("    gather")
-        print("  quit")
+        msg = "You can do any of the following:\n"
+        msg += "  help\n"
+        msg += "  status\n"
+        msg += "  tower\n"
+        msg += "    study\n"
+        msg += "    brew\n"
+        msg += "  village\n"
+        msg += "    shop\n"
+        msg += "    work\n"
+        msg += "    sell\n"
+        msg += "  forest\n"
+        msg += "    gather\n"
+        msg += "  quit"
+        return msg
 
     elif task == "quit":
         print("I am now quitting")
         raise EOFError
     else:
-        print(f"I don't understand:{task}")
+        return f"I don't understand:{task}"
 
 def pluralize(noun, num):
     if num == 1:
@@ -198,7 +212,7 @@ def power(num, P):
     """raises NUM to the exponent P."""
     return num**P
 
-def set_readline():
+def set_readline(): # a set of functions from the readline to complete command line text
     import readline
     readline.set_auto_history(True)
     readline.set_completer(completion)
