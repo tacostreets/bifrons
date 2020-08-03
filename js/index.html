@@ -13,11 +13,23 @@
         function task(evt) {
             evt.preventDefault();
             text = document.getElementById("task").value;
-            setLocation(text);
-            updateLocationText();
+            if (text == "study"){
+                // do study action
+                wizSkill = getSkill();
+                wizSkill = wizSkill + 1;
+                setSkill(wizSkill);
+                updateSkillText();
+            } else if (text == "reset") {
+                resetWizard();
+                updateSkillText();
+                updateLocationText();
+            } else {
+                setLocation(text);
+                updateLocationText();
+            }
         }
 
-        function updateLocationText() {
+        function updateLocationText() { // creates variable and updates web page text
             wizLocation = getLocation();//created wizLocation variable
             p = document.getElementById("location");
             if (wizLocation == "tower"){
@@ -31,32 +43,49 @@
             }
 
         }
-// local storage set here and can be changed inside this function later
-        function setLocation(wizLocation) {
+
+        function setLocation(wizLocation) { //sets & stores location
+            // local storage set here and can be changed inside this function later
+            // location progress is set here locally 
             localStorage.setItem("wizLocation", wizLocation);
         }
-
-        function getLocation() {
+        
+        function getLocation() { //gets location from storage
+            // retrieves the location from entry in the localStorage
             wizLocation = localStorage.getItem("wizLocation");
             if (wizLocation === null) {
                 setLocation("tower");
             }
             return localStorage.getItem("wizLocation");  
         }
-
-        function setSkill(wizSkill) {
+        
+        function setSkill(wizSkill) { //sets & stores skill
+            // sets and stores the skill aquired in the process of playing the game
             localStorage.setItem("wizSkill", wizSkill);
         }
-
-        function getSkill() {
+        
+        function getSkill() { //gets skill level
+            // retrieves the skill level from localStorage or sets to 0 if there is no history
             wizSkill = localStorage.getItem("wizSkill");
             if (wizSkill === null) {
                 setSkill(0);
             }
-            return localStorage.getItem("wizSkill");
+            wizSkill = localStorage.getItem("wizSkill");
+            wizSkill = parseInt(wizSkill);
+            return wizSkill;
         }
 
+        function updateSkillText() {// creates variable and updates web page text
+            wizSkill = getSkill();
 
+            p = document.getElementById("skill");
+            p.innerHTML = "What a good student! Current skill level is " + wizSkill + ".";  
+                
+        }
+
+        function resetWizard() {
+            localStorage.clear();
+        }
 
     </script>
 
@@ -69,10 +98,8 @@
         <input type="submit" value="Do My Bidding" />   
     </form>
     <hr/>
-    <p id="location">
-        
-    </p>
-
+    <p id="location"></p>
+    <p id="skill"></p>
 </body>
 
 </html>
