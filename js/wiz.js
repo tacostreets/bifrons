@@ -1,29 +1,33 @@
 function main() {
-    form = document.getElementById("wizard-form");
-    form.addEventListener("submit", task);
+    let form = document.getElementById("wizard-form");
+    form.addEventListener("submit", task); // enter or click submit and task function is called with evt passed thru
     updateLocationText();
     updateSkillText();
+    updateGoldText();
 }
 
-function task(evt) {
-    evt.preventDefault();
-    text = document.getElementById("task").value;
+function task(evt) { // submit is the event and the task is the object evt 
+    evt.preventDefault(); // submit default is to reload page w/ form params - this prevents reloading the page
+    let text = document.getElementById("task").value; 
     if (text == "study"){
         // do study action
         study();
+    } else if (text == "work"){
+        work();
     } else if (text == "reset") {
         resetWizard();
         updateLocationText();
         updateSkillText();
+        updateGoldText();
     } else {
         travel(text);
-    }
+    } 
 }
 
 function travel(newLocation) {//gets location and loops conditions to send a travel msg
     //replaces updateLocationText()
-    currentLocation = getLocation();
-    msg = document.getElementById("msg");
+    let currentLocation = getLocation();
+    let msg = document.getElementById("msg");
     if (newLocation == currentLocation) {
         msg.innerHTML = "You are already in " + currentLocation + ", silly wizard.";
     } else if (newLocation == "tower") {
@@ -42,7 +46,7 @@ function travel(newLocation) {//gets location and loops conditions to send a tra
 
 function getLocation() { //gets location from storage
     // retrieves the location from entry in the localStorage
-    wizLocation = localStorage.getItem("wizLocation");
+    let wizLocation = localStorage.getItem("wizLocation");
     if (wizLocation === null) {
         setLocation("tower");
     }
@@ -57,15 +61,15 @@ function setLocation(wizLocation) { //sets & stores location
 }
 
 function updateLocationText() { // creates variable and updates web page text
-    wizLocation = getLocation();//created wizLocation variable
-    p = document.getElementById("location");//pulls location from the form
+    let wizLocation = getLocation();//created wizLocation variable
+    let p = document.getElementById("location");//pulls location from the form
     p.innerHTML = "<b>Your current location is " + wizLocation + ".</b>";//declares current location
 }
 
 function study() {
-    currentLocation = getLocation();
-    currentSkill = getSkill();
-    msg = document.getElementById("msg");
+    let currentLocation = getLocation();
+    let currentSkill = getSkill();
+    let msg = document.getElementById("msg");
     if (currentLocation == "tower") {
         currentSkill = currentSkill + 1;
         setSkill(currentSkill);
@@ -77,12 +81,12 @@ function study() {
 
 function getSkill() { //gets skill level
     // retrieves the skill level from localStorage or sets to 0 if there is no history
-    wizSkill = localStorage.getItem("wizSkill");
+    let wizSkill = localStorage.getItem("wizSkill");
     if (wizSkill === null) {
         setSkill(0);
     }
     wizSkill = localStorage.getItem("wizSkill");
-    wizSkill = parseInt(wizSkill);
+    wizSkill = parseInt(wizSkill); // local storage always stores as a string so convert to int
     return wizSkill;
 }
 
@@ -93,10 +97,66 @@ function setSkill(wizSkill) { //sets & stores skill
 }
 
 function updateSkillText() {// creates variable and updates web page text
-    wizSkill = getSkill();
-    p = document.getElementById("skill");
+    let wizSkill = getSkill();
+    let p = document.getElementById("skill");
     p.innerHTML = "Current skill level is " + wizSkill + ".";  
 }
+
+function work() { // 
+    let currentLocation = getLocation();
+    let currentGold = getGold();
+    let currentSkill = getSkill();
+    let msg = document.getElementById("msg");
+    if (currentLocation == "village") {
+        currentGold += currentSkill;
+        setGold(currentGold);
+
+        if (currentSkill == 0) {
+            msg.innerHTML = "You need to learn some magic! Read a book!";
+        } else if (currentSkill >= 1 && currentSkill <= 3) {
+            msg.innerHTML = "You perform some cute magics for the children.";
+        } else if (currentSkill >= 4 && currentSkill <= 6) {
+            msg.innerHTML = "You cast healing spells. How novel.";
+        } else {
+            msg.innerHTML = "You show off your mighty magics and everyone is impressed!";
+        }
+    
+        
+    } else {
+        msg.innerHTML = "You can only work in the village.";
+    }
+
+} 
+
+function getGold() {
+    let wizGold = localStorage.getItem("wizGold");
+    if (wizGold === null) {
+        setGold(0);
+    }
+    wizGold = localStorage.getItem("wizGold");
+    wizGold = parseInt(wizGold);
+    return wizGold;
+}
+
+function setGold(wizGold) {
+    localStorage.setItem("wizGold", wizGold);
+    updateGoldText();
+}
+
+function updateGoldText() {
+
+    function coins(num) {
+        if (num == 1) {
+            return "" + num + " coin" 
+        } else {
+            return "" + num + " coins" 
+        } 
+    }
+    let wizGold = getGold();
+    let p = document.getElementById("gold");
+    p.innerHTML = "You now have " + coins(wizGold) + "!";
+} 
+
 
 function resetWizard() {
     localStorage.clear();
