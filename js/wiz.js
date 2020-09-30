@@ -4,6 +4,7 @@ function main() {
     updateLocationText();
     updateSkillText();
     updateGoldText();
+    updateLibraryText();
 }
 
 function task(evt) { // submit is the event and the task is the object evt 
@@ -14,11 +15,14 @@ function task(evt) { // submit is the event and the task is the object evt
         study();
     } else if (text == "work"){
         work();
+    } else if (text == "shop"){
+        shop();
     } else if (text == "reset") {
         resetWizard();
         updateLocationText();
         updateSkillText();
         updateGoldText();
+        updateLibraryText();
     } else {
         travel(text);
     } 
@@ -99,7 +103,34 @@ function setSkill(wizSkill) { //sets & stores skill
 function updateSkillText() {// creates variable and updates web page text
     let wizSkill = getSkill();
     let p = document.getElementById("skill");
-    p.innerHTML = "Current skill level is " + wizSkill + ".";  
+    p.innerHTML = "Current skill level is " + wizSkill + "!";  
+}
+
+function shop() {
+    let currentLocation = getLocation();
+    let currentGold = getGold();
+    let currentLibrary = getLibrary();
+    let msg = document.getElementById("msg");
+    if (currentLocation == "village"){
+        // check if i have enough gold
+        if (currentGold >= currentLibrary) {
+            // if enough gold subtract enough to buy book
+            currentGold -= currentLibrary;
+            setGold(currentGold);
+            // increase library upon purchase
+            currentLibrary += 1;
+            setLibrary(currentLibrary);
+            msg.innerHTML = "You bought a book!";
+            // not enough gold? msg w/ snark
+        } else if (currentGold == 0) {
+            msg.innerHTML = "Your wallet is empty. You're broke!"
+        } else {
+            msg.innerHTML = "You need more money to improve your library!"
+        }
+
+    } else {
+        msg.innerHTML = "You can only shop in the village.";
+    }
 }
 
 function work() { // 
@@ -156,6 +187,34 @@ function updateGoldText() {
     let p = document.getElementById("gold");
     p.innerHTML = "You now have " + coins(wizGold) + "!";
 } 
+
+function getLibrary() {
+    let wizLibrary = localStorage.getItem("wizLibrary");
+    if (wizLibrary === null) {
+        setLibrary(1);
+    }
+    wizLibrary = localStorage.getItem("wizLibrary");
+    wizLibrary = parseInt(wizLibrary);
+    return wizLibrary;
+}
+
+function setLibrary(wizLibrary) {
+    localStorage.setItem("wizLibrary", wizLibrary);
+    updateLibraryText();
+}
+
+function updateLibraryText() {
+    function books(num) {
+        if (num == 1) {
+            return "" + num + " book"
+        } else {
+            return "" + num + " books"
+        }
+    }
+    let wizLibrary = getLibrary();
+    let p = document.getElementById("library");
+    p.innerHTML = "You now have " + books(wizLibrary) + "!";
+}
 
 
 function resetWizard() {
