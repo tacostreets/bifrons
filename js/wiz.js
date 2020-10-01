@@ -5,11 +5,12 @@ function main() {
     updateSkillText();
     updateGoldText();
     updateLibraryText();
+    updateIngredientsText();
 }
 
 function task(evt) { // submit is the event and the task is the object evt 
     evt.preventDefault(); // submit default is to reload page w/ form params - this prevents reloading the page
-    let text = document.getElementById("task").value; 
+    let text = document.getElementById("task").value; //manually access task input field and update relevant parts in the page
     if (text == "study"){
         // do study action
         study();
@@ -17,14 +18,17 @@ function task(evt) { // submit is the event and the task is the object evt
         work();
     } else if (text == "shop"){
         shop();
-    } else if (text == "reset") {
+    } else if (text == "gather"){
+        gather();
+    } else if (text == "reset") { //update back to zero
         resetWizard();
         updateLocationText();
         updateSkillText();
         updateGoldText();
         updateLibraryText();
+        updateIngredientsText();
     } else {
-        travel(text);
+        travel(text); //passes thru the travel input, calls the function, sets the funtion and updates text
     } 
 }
 
@@ -133,6 +137,34 @@ function shop() {
     }
 }
 
+function getLibrary() {
+    let wizLibrary = localStorage.getItem("wizLibrary");
+    if (wizLibrary === null) {
+        setLibrary(1);
+    }
+    wizLibrary = localStorage.getItem("wizLibrary");
+    wizLibrary = parseInt(wizLibrary);
+    return wizLibrary;
+}
+
+function setLibrary(wizLibrary) {
+    localStorage.setItem("wizLibrary", wizLibrary);
+    updateLibraryText();
+}
+
+function updateLibraryText() {
+    function books(num) {
+        if (num == 1) {
+            return "" + num + " book"
+        } else {
+            return "" + num + " books"
+        }
+    }
+    let wizLibrary = getLibrary();
+    let p = document.getElementById("library");
+    p.innerHTML = "You now have " + books(wizLibrary) + "!";
+}
+
 function work() { // 
     let currentLocation = getLocation();
     let currentGold = getGold();
@@ -188,34 +220,47 @@ function updateGoldText() {
     p.innerHTML = "You now have " + coins(wizGold) + "!";
 } 
 
-function getLibrary() {
-    let wizLibrary = localStorage.getItem("wizLibrary");
-    if (wizLibrary === null) {
-        setLibrary(1);
+function gather() {
+    let currentLocation = getLocation();
+    let currentIngredients = getIngredients();
+    let msg = document.getElementById("msg");
+    if (currentLocation == "forest") {
+        currentIngredients += 1;
+        setIngredients(currentIngredients);
+        msg.innerHTML = "You gather your ingredients!";
+    } else {
+        msg.innerHTML = "You can only gather in the forest, silly wizard.";
     }
-    wizLibrary = localStorage.getItem("wizLibrary");
-    wizLibrary = parseInt(wizLibrary);
-    return wizLibrary;
 }
 
-function setLibrary(wizLibrary) {
-    localStorage.setItem("wizLibrary", wizLibrary);
-    updateLibraryText();
+function getIngredients() {
+    let wizIngredients = localStorage.getItem("wizIngredients");
+    if (wizIngredients === null) {
+        setIngredients(0);
+    }
+    wizIngredients = localStorage.getItem("wizIngredients");
+    wizIngredients = parseInt(wizIngredients);
+    return wizIngredients;
 }
 
-function updateLibraryText() {
-    function books(num) {
+function setIngredients(wizIngredients) {
+    localStorage.setItem("wizIngredients", wizIngredients);
+    updateIngredientsText();
+}
+
+function updateIngredientsText() {
+
+    function ingredients(num) {
         if (num == 1) {
-            return "" + num + " book"
+            return "" + num + " ingredient" 
         } else {
-            return "" + num + " books"
-        }
+            return "" + num + " ingredients" 
+        } 
     }
-    let wizLibrary = getLibrary();
-    let p = document.getElementById("library");
-    p.innerHTML = "You now have " + books(wizLibrary) + "!";
-}
-
+    let wizIngredients = getIngredients();
+    let p = document.getElementById("ingredients");
+    p.innerHTML = "You now have " + ingredients(wizIngredients) + "!";
+} 
 
 function resetWizard() {
     localStorage.clear();
