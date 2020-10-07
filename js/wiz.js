@@ -1,11 +1,8 @@
 function main() {
     let form = document.getElementById("wizard-form");
     form.addEventListener("submit", task); // enter or click submit and task function is called with evt passed thru
-    updateLocationText();
-    updateSkillText();
-    updateGoldText();
-    updateLibraryText();
-    updateIngredientsText();
+    updateText();
+    
 }
 
 function task(evt) { // submit is the event and the task is the object evt 
@@ -22,14 +19,17 @@ function task(evt) { // submit is the event and the task is the object evt
         gather();
     } else if (text == "reset") { //update back to zero
         resetWizard();
-        updateLocationText();
-        updateSkillText();
-        updateGoldText();
-        updateLibraryText();
-        updateIngredientsText();
+        updateText();
     } else {
         travel(text); //passes thru the travel input, calls the function, sets the funtion and updates text
     } 
+}
+function updateText() {
+    updateLocationText();
+    updateSkillText();
+    updateGoldText();
+    updateLibraryText();
+    updateIngredientsText();
 }
 
 function travel(newLocation) {//gets location and loops conditions to send a travel msg
@@ -65,7 +65,7 @@ function setLocation(wizLocation) { //sets & stores location
     // local storage set here and can be changed inside this function later
     // location progress is set here locally 
     localStorage.setItem("wizLocation", wizLocation);//save
-    updateLocationText();
+    updateText();
 }
 
 function updateLocationText() { // creates variable and updates web page text
@@ -101,7 +101,7 @@ function getSkill() { //gets skill level
 function setSkill(wizSkill) { //sets & stores skill
     // sets and stores the skill aquired in the process of playing the game
     localStorage.setItem("wizSkill", wizSkill);
-    updateSkillText();
+    updateText();
 }
 
 function updateSkillText() {// creates variable and updates web page text
@@ -149,7 +149,7 @@ function getLibrary() {
 
 function setLibrary(wizLibrary) {
     localStorage.setItem("wizLibrary", wizLibrary);
-    updateLibraryText();
+    updateText();
 }
 
 function updateLibraryText() {
@@ -203,7 +203,7 @@ function getGold() {
 
 function setGold(wizGold) {
     localStorage.setItem("wizGold", wizGold);
-    updateGoldText();
+    updateText();
 }
 
 function updateGoldText() {
@@ -245,7 +245,7 @@ function getIngredients() {
 
 function setIngredients(wizIngredients) {
     localStorage.setItem("wizIngredients", wizIngredients);
-    updateIngredientsText();
+    updateText();
 }
 
 function updateIngredientsText() {
