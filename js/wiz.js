@@ -25,11 +25,34 @@ function task(evt) { // submit is the event and the task is the object evt
     } 
 }
 function updateText() {
-    updateLocationText();
-    updateSkillText();
-    updateGoldText();
-    updateLibraryText();
-    updateIngredientsText();
+    let p = 0;
+    function nouns(noun, num) {
+        if (num == 1) {
+            return "" + num + " " + noun 
+        } else {
+            return "" + num + " " + noun + "s"
+        } 
+    }
+
+    let wizLocation = getLocation();//created wizLocation variable
+    p = document.getElementById("location");//pulls location from the form
+    p.innerHTML = "<b>Your current location is " + wizLocation + ".</b>";//declares current location
+
+    let wizSkill = getSkill();
+    p = document.getElementById("skill");
+    p.innerHTML = "Current skill level is " + wizSkill + "!"; 
+
+    let wizGold = getGold();
+    p = document.getElementById("gold");
+    p.innerHTML = "You now have " + nouns("coin", wizGold) + "!";
+
+    let wizLibrary = getLibrary();
+    p = document.getElementById("library");
+    p.innerHTML = "You now have " + nouns("book", wizLibrary) + "!";
+
+    let wizIngredients = getIngredients();
+    p = document.getElementById("ingredients");
+    p.innerHTML = "You now have " + nouns("ingredient", wizIngredients) + "!";
 }
 
 function travel(newLocation) {//gets location and loops conditions to send a travel msg
@@ -68,20 +91,19 @@ function setLocation(wizLocation) { //sets & stores location
     updateText();
 }
 
-function updateLocationText() { // creates variable and updates web page text
-    let wizLocation = getLocation();//created wizLocation variable
-    let p = document.getElementById("location");//pulls location from the form
-    p.innerHTML = "<b>Your current location is " + wizLocation + ".</b>";//declares current location
-}
-
 function study() {
     let currentLocation = getLocation();
     let currentSkill = getSkill();
+    let currentLibrary = getLibrary();
     let msg = document.getElementById("msg");
     if (currentLocation == "tower") {
-        currentSkill = currentSkill + 1;
-        setSkill(currentSkill);
-        msg.innerHTML = "What a good student!";
+        if (currentLibrary > currentSkill) {
+            currentSkill = currentSkill + 1;
+            setSkill(currentSkill);
+            msg.innerHTML = "What a good student!";
+        } else {
+            msg.innerHTML = "You need a bigger library to increase your skill!";
+        }
     } else {
         msg.innerHTML = "You can only study in the tower.";
     }
@@ -102,12 +124,6 @@ function setSkill(wizSkill) { //sets & stores skill
     // sets and stores the skill aquired in the process of playing the game
     localStorage.setItem("wizSkill", wizSkill);
     updateText();
-}
-
-function updateSkillText() {// creates variable and updates web page text
-    let wizSkill = getSkill();
-    let p = document.getElementById("skill");
-    p.innerHTML = "Current skill level is " + wizSkill + "!";  
 }
 
 function shop() {
@@ -152,19 +168,6 @@ function setLibrary(wizLibrary) {
     updateText();
 }
 
-function updateLibraryText() {
-    function books(num) {
-        if (num == 1) {
-            return "" + num + " book"
-        } else {
-            return "" + num + " books"
-        }
-    }
-    let wizLibrary = getLibrary();
-    let p = document.getElementById("library");
-    p.innerHTML = "You now have " + books(wizLibrary) + "!";
-}
-
 function work() { // 
     let currentLocation = getLocation();
     let currentGold = getGold();
@@ -206,20 +209,6 @@ function setGold(wizGold) {
     updateText();
 }
 
-function updateGoldText() {
-
-    function coins(num) {
-        if (num == 1) {
-            return "" + num + " coin" 
-        } else {
-            return "" + num + " coins" 
-        } 
-    }
-    let wizGold = getGold();
-    let p = document.getElementById("gold");
-    p.innerHTML = "You now have " + coins(wizGold) + "!";
-} 
-
 function gather() {
     let currentLocation = getLocation();
     let currentIngredients = getIngredients();
@@ -247,20 +236,6 @@ function setIngredients(wizIngredients) {
     localStorage.setItem("wizIngredients", wizIngredients);
     updateText();
 }
-
-function updateIngredientsText() {
-
-    function ingredients(num) {
-        if (num == 1) {
-            return "" + num + " ingredient" 
-        } else {
-            return "" + num + " ingredients" 
-        } 
-    }
-    let wizIngredients = getIngredients();
-    let p = document.getElementById("ingredients");
-    p.innerHTML = "You now have " + ingredients(wizIngredients) + "!";
-} 
 
 function resetWizard() {
     localStorage.clear();
