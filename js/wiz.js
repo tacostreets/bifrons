@@ -24,6 +24,7 @@ function task(evt) { // submit is the event and the task is the object evt
         travel(text); //passes thru the travel input, calls the function, sets the funtion and updates text
     } 
 }
+
 function updateText() {
     let p = 0;
     function nouns(noun, num) {
@@ -58,20 +59,19 @@ function updateText() {
 function travel(newLocation) {//gets location and loops conditions to send a travel msg
     //replaces updateLocationText()
     let currentLocation = getLocation();
-    let msg = document.getElementById("msg");
     if (newLocation == currentLocation) {
-        msg.innerHTML = "You are already in " + currentLocation + ", silly wizard.";
+        report("You are already in " + currentLocation + ", silly wizard.");
     } else if (newLocation == "tower") {
-        msg.innerHTML = "You travel to your modest one-story wizard tower.";
+        report("You travel to your modest one-story wizard tower.");
         setLocation(newLocation);
     } else if (newLocation == "village") {
-        msg.innerHTML = "You travel to the village 100 yds upwind from your tower.";
+        report("You travel to the village 100 yds upwind from your tower.");
         setLocation(newLocation);
     } else if (newLocation == "forest") {
-        msg.innerHTML = "You head out into the forest behind your tower.";
+        report("You head out into the forest behind your tower.");
         setLocation(newLocation);
     } else {
-        msg.innerHTML = "I don't know where " + newLocation + " is.";
+        report("I don't know where " + newLocation + " is.");
     }
 }
 
@@ -95,17 +95,16 @@ function study() {
     let currentLocation = getLocation();
     let currentSkill = getSkill();
     let currentLibrary = getLibrary();
-    let msg = document.getElementById("msg");
     if (currentLocation == "tower") {
         if (currentLibrary > currentSkill) {
             currentSkill = currentSkill + 1;
             setSkill(currentSkill);
-            msg.innerHTML = "What a good student!";
+            report("What a good student!");
         } else {
-            msg.innerHTML = "You need a bigger library to increase your skill!";
+            report("You need a bigger library to increase your skill!");
         }
     } else {
-        msg.innerHTML = "You can only study in the tower.";
+        report("You can only study in the tower.");
     }
 }
 
@@ -130,7 +129,6 @@ function shop() {
     let currentLocation = getLocation();
     let currentGold = getGold();
     let currentLibrary = getLibrary();
-    let msg = document.getElementById("msg");
     if (currentLocation == "village"){
         // check if i have enough gold
         if (currentGold >= currentLibrary) {
@@ -140,16 +138,16 @@ function shop() {
             // increase library upon purchase
             currentLibrary += 1;
             setLibrary(currentLibrary);
-            msg.innerHTML = "You bought a book!";
+            report("You bought a book!");
             // not enough gold? msg w/ snark
         } else if (currentGold == 0) {
-            msg.innerHTML = "Your wallet is empty. You're broke!"
+            report("Your wallet is empty. You're broke!");
         } else {
-            msg.innerHTML = "You need more money to improve your library!"
+            report("You need more money to improve your library!");
         }
 
     } else {
-        msg.innerHTML = "You can only shop in the village.";
+        report("You can only shop in the village.");
     }
 }
 
@@ -172,24 +170,23 @@ function work() { //
     let currentLocation = getLocation();
     let currentGold = getGold();
     let currentSkill = getSkill();
-    let msg = document.getElementById("msg");
     if (currentLocation == "village") {
         currentGold += currentSkill;
         setGold(currentGold);
 
         if (currentSkill == 0) {
-            msg.innerHTML = "You need to learn some magic! Read a book!";
+            report("You need to learn some magic! Read a book!");
         } else if (currentSkill >= 1 && currentSkill <= 3) {
-            msg.innerHTML = "You perform some cute magics for the children.";
+            report("You perform some cute magics for the children.");
         } else if (currentSkill >= 4 && currentSkill <= 6) {
-            msg.innerHTML = "You cast healing spells. How novel.";
+            report("You cast healing spells. How novel.");
         } else {
-            msg.innerHTML = "You show off your mighty magics and everyone is impressed!";
+            report("You show off your mighty magics and everyone is impressed!");
         }
     
         
     } else {
-        msg.innerHTML = "You can only work in the village.";
+        report("You can only work in the village.");
     }
 
 } 
@@ -212,13 +209,12 @@ function setGold(wizGold) {
 function gather() {
     let currentLocation = getLocation();
     let currentIngredients = getIngredients();
-    let msg = document.getElementById("msg");
     if (currentLocation == "forest") {
         currentIngredients += 1;
         setIngredients(currentIngredients);
-        msg.innerHTML = "You gather your ingredients!";
+        report("You gather your ingredients!");
     } else {
-        msg.innerHTML = "You can only gather in the forest, silly wizard.";
+        report("You can only gather in the forest, silly wizard.");
     }
 }
 
@@ -239,4 +235,10 @@ function setIngredients(wizIngredients) {
 
 function resetWizard() {
     localStorage.clear();
+}
+
+function report(message) {
+    let msg = document.getElementById("msg");
+    msg.innerHTML = message;
+
 }
