@@ -58,17 +58,17 @@ function updateText() {
 
 function travel(newLocation) {//gets location and loops conditions to send a travel msg
     //replaces updateLocationText()
+    let locations = {
+        "tower": "You travel to your modest one-story wizard tower.",
+        "village": "You travel to the village 100 yds upwind from your tower.",
+        "forest": "You head out into the forest behind your tower.",
+        "mountain": "You head to the mountain above the forest."
+    };
     let currentLocation = getLocation();
     if (newLocation == currentLocation) {
         report("You are already in " + currentLocation + ", silly wizard.");
-    } else if (newLocation == "tower") {
-        report("You travel to your modest one-story wizard tower.");
-        setLocation(newLocation);
-    } else if (newLocation == "village") {
-        report("You travel to the village 100 yds upwind from your tower.");
-        setLocation(newLocation);
-    } else if (newLocation == "forest") {
-        report("You head out into the forest behind your tower.");
+    } else if (locations.hasOwnProperty(newLocation)) {
+        report(locations[newLocation]);
         setLocation(newLocation);
     } else {
         report("I don't know where " + newLocation + " is.");
