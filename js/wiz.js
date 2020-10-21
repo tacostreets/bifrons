@@ -213,7 +213,7 @@ function getVar(varName) {
     // continue and create new variable "response" that looks in localStorage for varName
     let response = localStorage.getItem(varName);
     // if it's not there we will get the default from the variable "defaults", add to localStorage, 
-    // and set response to default and set response to equal the new value
+    // set response to default, and set response to equal the new value
     if (response === null){
         let value = defaults[varName];
         localStorage.setItem(varName, value);
