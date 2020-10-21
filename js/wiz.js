@@ -43,7 +43,7 @@ function updateText() {
     p = document.getElementById("skill");
     p.innerHTML = "Current skill level is " + wizSkill + "!"; 
 
-    let wizGold = getGold();
+    let wizGold = getVar("wizGold");
     p = document.getElementById("gold");
     p.innerHTML = "You now have " + nouns("coin", wizGold) + "!";
 
@@ -127,7 +127,7 @@ function setSkill(wizSkill) { //sets & stores skill
 
 function shop() {
     let currentLocation = getLocation();
-    let currentGold = getGold();
+    let currentGold = getVar("wizGold");
     let currentLibrary = getLibrary();
     if (currentLocation == "village"){
         // check if i have enough gold
@@ -168,7 +168,7 @@ function setLibrary(wizLibrary) {
 
 function work() { // 
     let currentLocation = getLocation();
-    let currentGold = getGold();
+    let currentGold = getVar("wizGold");
     let currentSkill = getSkill();
     if (currentLocation == "village") {
         currentGold += currentSkill;
@@ -199,6 +199,33 @@ function getGold() {
     wizGold = localStorage.getItem("wizGold");
     wizGold = parseInt(wizGold);
     return wizGold;
+}
+
+function getVar(varName) {
+    let defaults = {
+        "wizGold": 0
+    };
+    // is varName in defaults?
+    if (! defaults.hasOwnProperty(varName)) {
+        // if no then exit function
+        return null; 
+    }
+    // continue and create new variable "response" that looks in localStorage for varName
+    let response = localStorage.getItem(varName);
+    // if it's not there we will get the default from the variable "defaults", add to localStorage, 
+    // and set response to default and set response to equal the new value
+    if (response === null){
+        let value = defaults[varName];
+        localStorage.setItem(varName, value);
+        response = value;
+        // if not null then continue
+    }
+    // is defaults[varName] an int? the string "number" is included with the builtin typeof
+    if (typeof defaults[varName] === "number") {
+    // checks to see if defaults is specifically a number 
+        response = parseInt(response);
+    }
+    return response;
 }
 
 function setGold(wizGold) {
