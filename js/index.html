@@ -3,27 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Wizard's Adventures</title>
-    <script src="wiz.js">
-       
-
-    </script>
-
+    <script src="wiz.js" /></script>
+    <link rel="stylesheet" href="wiz.css" />
 </head>
 
 <body onload="main()">
+    <div class="content">
+    <h1>Wizard's Adventures</h1>
     <form id="wizard-form" action="index.html" method="GET">
         <label for="task">What would you like to do?</label>
         <input id="task" type="text" name="task" />
-        <input type="submit" value="Do My Bidding" />   
+        <input id="submit" type="submit" value="Do My Bidding" />   
     </form>
-    <hr/>
-    <p id="location"></p>
-    <p id="skill"></p>
-    <p id="gold"></p>
-    <p id="ingredients"></p>
-    <p id="library"></p>
+
+    <div id="display-table">
+    <table>
+        <tr><td>Location</td>      <td id="location"></td></tr>
+        <tr><td>Magical Skill</td> <td id="skill"></td></tr>
+        <tr><td>Library</td>       <td id="library"></td></tr>
+        <tr><td>Ingredients</td>   <td id="ingredients"></td></tr>
+        <tr><td>Gold</td>          <td id="gold"></td></tr>
+    </table>
+    </div>
+
     <p id="msg" style="font-weight: bold;"></p>
 
+    <div class="stupid"></div>
+    </div>
 </body>
 
 </html>
