@@ -35,23 +35,23 @@ function updateText() {
         } 
     }
 
-    let wizLocation = getLocation();//created wizLocation variable
+    let wizLocation = load("wizLocation");//created wizLocation variable
     p = document.getElementById("location");//pulls location from the form
     p.innerHTML = "<b>Your current location is " + wizLocation + ".</b>";//declares current location
 
-    let wizSkill = getSkill();
+    let wizSkill = load("wizSkill");
     p = document.getElementById("skill");
     p.innerHTML = "Current skill level is " + wizSkill + "!"; 
 
-    let wizGold = getVar("wizGold");
+    let wizGold = load("wizGold");
     p = document.getElementById("gold");
     p.innerHTML = "You now have " + nouns("coin", wizGold) + "!";
 
-    let wizLibrary = getLibrary();
+    let wizLibrary = load("wizLibrary");
     p = document.getElementById("library");
     p.innerHTML = "You now have " + nouns("book", wizLibrary) + "!";
 
-    let wizIngredients = getIngredients();
+    let wizIngredients = load("wizIngredients");
     p = document.getElementById("ingredients");
     p.innerHTML = "You now have " + nouns("ingredient", wizIngredients) + "!";
 }
@@ -64,41 +64,25 @@ function travel(newLocation) {//gets location and loops conditions to send a tra
         "forest": "You head out into the forest behind your tower.",
         "mountain": "You head to the mountain above the forest."
     };
-    let currentLocation = getLocation();
+    let currentLocation = load("wizLocation");
     if (newLocation == currentLocation) {
         report("You are already in " + currentLocation + ", silly wizard.");
     } else if (locations.hasOwnProperty(newLocation)) {
         report(locations[newLocation]);
-        setLocation(newLocation);
+        save("wizLocation", newLocation);
     } else {
         report("I don't know where " + newLocation + " is.");
     }
 }
 
-function getLocation() { //gets location from storage
-    // retrieves the location from entry in the localStorage
-    let wizLocation = localStorage.getItem("wizLocation");
-    if (wizLocation === null) {
-        setLocation("tower");
-    }
-    return localStorage.getItem("wizLocation");  
-}
-
-function setLocation(wizLocation) { //sets & stores location
-    // local storage set here and can be changed inside this function later
-    // location progress is set here locally 
-    localStorage.setItem("wizLocation", wizLocation);//save
-    updateText();
-}
-
 function study() {
-    let currentLocation = getLocation();
-    let currentSkill = getSkill();
-    let currentLibrary = getLibrary();
+    let currentLocation = load("wizLocation");
+    let currentSkill = load("wizSkill");
+    let currentLibrary = load("wizLibrary");
     if (currentLocation == "tower") {
         if (currentLibrary > currentSkill) {
             currentSkill = currentSkill + 1;
-            setSkill(currentSkill);
+            save("wizSkill", currentSkill);
             report("What a good student!");
         } else {
             report("You need a bigger library to increase your skill!");
@@ -108,36 +92,19 @@ function study() {
     }
 }
 
-function getSkill() { //gets skill level
-    // retrieves the skill level from localStorage or sets to 0 if there is no history
-    let wizSkill = localStorage.getItem("wizSkill");
-    if (wizSkill === null) {
-        setSkill(0);
-    }
-    wizSkill = localStorage.getItem("wizSkill");
-    wizSkill = parseInt(wizSkill); // local storage always stores as a string so convert to int
-    return wizSkill;
-}
-
-function setSkill(wizSkill) { //sets & stores skill
-    // sets and stores the skill aquired in the process of playing the game
-    localStorage.setItem("wizSkill", wizSkill);
-    updateText();
-}
-
 function shop() {
-    let currentLocation = getLocation();
-    let currentGold = getVar("wizGold");
-    let currentLibrary = getLibrary();
+    let currentLocation = load("wizLocation");
+    let currentGold = load("wizGold");
+    let currentLibrary = load("wizLibrary");
     if (currentLocation == "village"){
         // check if i have enough gold
         if (currentGold >= currentLibrary) {
             // if enough gold subtract enough to buy book
             currentGold -= currentLibrary;
-            setGold(currentGold);
+            save("wizGold", currentGold);
             // increase library upon purchase
             currentLibrary += 1;
-            setLibrary(currentLibrary);
+            save("wizLibrary", currentLibrary);
             report("You bought a book!");
             // not enough gold? msg w/ snark
         } else if (currentGold == 0) {
@@ -151,28 +118,13 @@ function shop() {
     }
 }
 
-function getLibrary() {
-    let wizLibrary = localStorage.getItem("wizLibrary");
-    if (wizLibrary === null) {
-        setLibrary(1);
-    }
-    wizLibrary = localStorage.getItem("wizLibrary");
-    wizLibrary = parseInt(wizLibrary);
-    return wizLibrary;
-}
-
-function setLibrary(wizLibrary) {
-    localStorage.setItem("wizLibrary", wizLibrary);
-    updateText();
-}
-
 function work() { // 
-    let currentLocation = getLocation();
-    let currentGold = getVar("wizGold");
-    let currentSkill = getSkill();
+    let currentLocation = load("wizLocation");
+    let currentGold = load("wizGold");
+    let currentSkill = load("wizSkill");
     if (currentLocation == "village") {
         currentGold += currentSkill;
-        setGold(currentGold);
+        save("wizGold", currentGold);
 
         if (currentSkill == 0) {
             report("You need to learn some magic! Read a book!");
@@ -191,73 +143,57 @@ function work() { //
 
 } 
 
-function getGold() {
-    let wizGold = localStorage.getItem("wizGold");
-    if (wizGold === null) {
-        setGold(0);
-    }
-    wizGold = localStorage.getItem("wizGold");
-    wizGold = parseInt(wizGold);
-    return wizGold;
-}
-
-function getVar(varName) {
+function load(name) {
     let defaults = {
-        "wizGold": 0
+        "wizGold": 0,
+        "wizIngredients": 0,
+        "wizLibrary": 1,
+        "wizSkill": 0,
+        "wizLocation": "tower"
     };
-    // is varName in defaults?
-    if (! defaults.hasOwnProperty(varName)) {
+    // is name in defaults?
+    if (! defaults.hasOwnProperty(name)) {
         // if no then exit function
         return null; 
     }
-    // continue and create new variable "response" that looks in localStorage for varName
-    let response = localStorage.getItem(varName);
+    // continue and create new variable "response" that looks in localStorage for name
+    let response = localStorage.getItem(name);
     // if it's not there we will get the default from the variable "defaults", add to localStorage, 
     // set response to default, and set response to equal the new value
     if (response === null){
-        let value = defaults[varName];
-        localStorage.setItem(varName, value);
+        let value = defaults[name];
+        localStorage.setItem(name, value);
         response = value;
         // if not null then continue
     }
-    // is defaults[varName] an int? the string "number" is included with the builtin typeof
-    if (typeof defaults[varName] === "number") {
+    // is defaults[name] an int? the string "number" is included with the builtin typeof
+    if (typeof defaults[name] === "number") {
     // checks to see if defaults is specifically a number 
         response = parseInt(response);
     }
     return response;
 }
 
-function setGold(wizGold) {
-    localStorage.setItem("wizGold", wizGold);
+function save(name, value) {
+    localStorage.setItem(name, value);
+    updateText();
+}
+
+function setSkill(value) { 
+    localStorage.setItem("wizSkill", value);
     updateText();
 }
 
 function gather() {
-    let currentLocation = getLocation();
-    let currentIngredients = getIngredients();
+    let currentLocation = load("wizLocation");
+    let currentIngredients = load("wizIngredients");
     if (currentLocation == "forest") {
         currentIngredients += 1;
-        setIngredients(currentIngredients);
+        save("wizIngredients", currentIngredients);
         report("You gather your ingredients!");
     } else {
         report("You can only gather in the forest, silly wizard.");
     }
-}
-
-function getIngredients() {
-    let wizIngredients = localStorage.getItem("wizIngredients");
-    if (wizIngredients === null) {
-        setIngredients(0);
-    }
-    wizIngredients = localStorage.getItem("wizIngredients");
-    wizIngredients = parseInt(wizIngredients);
-    return wizIngredients;
-}
-
-function setIngredients(wizIngredients) {
-    localStorage.setItem("wizIngredients", wizIngredients);
-    updateText();
 }
 
 function resetWizard() {
